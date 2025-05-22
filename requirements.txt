@@ -20,8 +20,5 @@ pytest-cov==4.1.0
 gunicorn==21.2.0
 whitenoise==6.5.0
 
-# 📡 GridFS para MongoDB
-gridfs==0.5.0
-
 # 🔄 Requisitos para Upload de Arquivos
 flask-uploads==0.2.1
