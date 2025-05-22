@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | Chefabook</title>
+    <!-- Favicon -->
+    <link rel="icon" href="https://img.icons8.com/color/48/000000/restaurant--v1.png" type="image/x-icon">
+    <link rel="shortcut icon" href="https://img.icons8.com/color/48/000000/restaurant--v1.png" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='uploads/styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Botão de login no canto superior direito -->
+    <div class="login-top-right">
+        <a href="{{ url_for('login') }}" class="btn-login">Entrar</a>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero-container">
+        <div class="hero-content">
+            <h1>Bem-vindo ao <span class="logo">Chefabook</span></h1>
+            <p class="subtitle">Seu livro de receitas digital</p>
+        </div>
+    </div>
+
+    <!-- Container Principal -->
+    <div class="container">
+        <div class="intro-section">
+            <div class="intro-image">
+                <img src="https://images.unsplash.com/photo-1547592180-85f173990554?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Chef cozinhando">
+            </div>
+            <div class="intro-text">
+                <p>Bem-vindo ao Chefabook, o seu espaço perfeito para guardar, organizar e explorar receitas deliciosas!</p>
+                <p>No Chefabook, acreditamos que cada receita tem uma história – seja aquela herança de família, uma criação própria ou uma descoberta que conquistou seu coração. Aqui, você pode salvar todas as suas receitas favoritas em um só lugar, de forma prática e personalizada.</p>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features-section">
+            <h2>Por que usar o Chefabook?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <img src="https://images.unsplash.com/photo-1518779578993-ec3579fee39f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Organização">
+                    <h3>Organização fácil</h3>
+                    <p>Crie categorias, adicione tags e encontre qualquer receita em segundos.</p>
+                </div>
+                <div class="feature-card">
+                    <img src="https://images.unsplash.com/photo-1555774698-0b77e0d5fac6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Acesso">
+                    <h3>Acesso em qualquer lugar</h3>
+                    <p>Tenha suas receitas na palma da mão, no computador, tablet ou celular.</p>
+                </div>
+                <div class="feature-card">
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Planejamento">
+                    <h3>Planejamento Semanal</h3>
+                    <p>Crie seu cardápio semanal e gere automaticamente a lista de compras.</p>
+                </div>
+                <div class="feature-card">
+                    <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Inspiração">
+                    <h3>Inspiração diária</h3>
+                    <p>Explore sugestões e dicas para turbinar suas habilidades na cozinha.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Chefabook. Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>

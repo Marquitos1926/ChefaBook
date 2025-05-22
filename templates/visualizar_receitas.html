@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Receitas | Chefabook</title>
+    <link rel="icon" href="https://img.icons8.com/color/48/000000/restaurant--v1.png" type="image/x-icon">
+    <link rel="shortcut icon" href="https://img.icons8.com/color/48/000000/restaurant--v1.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2E7D32;
+            --secondary-color: #FFA726;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --text-color: #495057;
+            --text-light: #6c757d;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .navbar-custom {
+            background-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 0.8rem 0;
+        }
+        
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .navbar-brand i {
+            color: var(--secondary-color);
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            padding: 0.5rem 1.2rem;
+            margin: 0 0.2rem;
+            border-radius: 4px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        .nav-link.active {
+            background-color: var(--secondary-color);
+            color: var(--dark-color) !important;
+        }
+        
+        .logout-link {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logout-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: white;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            transform-origin: right;
+        }
+        
+        .logout-link:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+        .container-main {
+            max-width: 1200px;
+            margin-top: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .page-header {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .card-receita {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            background-color: white;
+        }
+        
+        .card-receita:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+        
+        .receita-imagem {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+        
+        .sem-imagem {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            background-color: #e9ecef;
+            color: var(--text-light);
+        }
+        
+        .badge-categoria {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+        }
+        
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--dark-color);
+        }
+        
+        .card-text {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+        
+        .ingredientes-preparo {
+            white-space: pre-line;
+        }
+        
+        .btn-action {
+            padding: 0.5rem 1.25rem;
+            font-size: 0.9rem;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-edit {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+        }
+        
+        .btn-edit:hover {
+            background-color: #1e5a21;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.4);
+        }
+        
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+        
+        .btn-delete:hover {
+            background-color: #bb2d3b;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        }
+        
+        .empty-state-icon {
+            font-size: 3.5rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+        
+        .empty-state-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-add-receita {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.75rem 2rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+        }
+        
+        .btn-add-receita:hover {
+            background-color: #1e5a21;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.4);
+            color: white;
+        }
+        
+        .footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 5rem;
+        }
+
+        .tempo-preparo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-footer {
+            background-color: white;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        @media (max-width: 768px) {
+            .receita-imagem, .sem-imagem {
+                height: 160px;
+            }
+            
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .btn-action {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegação -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+                <i class="bi bi-journal-bookmark"></i> Chefabook
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="bi bi-house"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('cadastrar_receita') }}">
+                            <i class="bi bi-plus-circle"></i> Nova Receita
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('visualizar_receitas') }}">
+                            <i class="bi bi-collection"></i> Minhas Receitas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('home') }}">
+                            <i class="bi bi-arrow-left"></i> Voltar ao Início
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link logout-link" href="{{ url_for('logout') }}">
+                            <i class="bi bi-box-arrow-right"></i> Sair
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo principal -->
+    <div class="container container-main">
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="page-title">
+                    <i class="bi bi-collection"></i> Minhas Receitas
+                </h1>
+                <a href="{{ url_for('cadastrar_receita') }}" class="btn btn-add-receita">
+                    <i class="bi bi-plus-lg"></i> Adicionar Receita
+                </a>
+            </div>
+        </div>
+        
+        <!-- Mensagens flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-4">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        {% if receitas %}
+        <div class="row">
+            {% for receita in receitas %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card card-receita h-100">
+                    {% if receita.tem_imagem %}
+                        <img src="{{ url_for('imagem_receita', receita_id=receita.id) }}" 
+                             class="receita-imagem" 
+                             alt="{{ receita.titulo }}">
+                    {% else %}
+                        <div class="sem-imagem">
+                            <i class="bi bi-image" style="font-size: 3rem;"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h3 class="card-title mb-0">{{ receita.titulo }}</h3>
+                            <span class="badge badge-categoria">{{ receita.categoria }}</span>
+                        </div>
+                        
+                        <div class="tempo-preparo">
+                            <i class="bi bi-clock"></i>
+                            <span>{{ receita.tempo_preparo }} minutos</span>
+                        </div>
+                        
+                        <div class="card-text mb-3">
+                            <h6 class="text-muted mb-2">Ingredientes:</h6>
+                            <p class="ingredientes-preparo text-truncate">{{ receita.ingredientes }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('editar_receita', receita_id=receita.id) }}" 
+                               class="btn btn-action btn-edit">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                            <form action="{{ url_for('excluir_receita', receita_id=receita.id) }}" method="POST">
+                                <button type="submit" class="btn btn-action btn-delete"
+                                        onclick="return confirm('Tem certeza que deseja excluir esta receita?')">
+                                    <i class="bi bi-trash"></i> Excluir
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="bi bi-journal-x"></i>
+            </div>
+            <h2 class="empty-state-title">Nenhuma receita cadastrada</h2>
+            <p class="text-muted mb-4">Você ainda não cadastrou nenhuma receita. Comece agora mesmo!</p>
+            <a href="{{ url_for('cadastrar_receita') }}" class="btn btn-add-receita">
+                <i class="bi bi-plus-lg"></i> Criar Primeira Receita
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="footer text-center">
+        <div class="container">
+            <p class="mb-0">© 2025 Chefabook. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Confirmação antes de excluir
+        document.querySelectorAll('.btn-delete').forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (!confirm('Tem certeza que deseja excluir esta receita?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

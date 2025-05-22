@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Receita | Chefabook Admin</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary-color: #2E7D32;
+            --secondary-color: #FFA726;
+            --dark-color: #1b5e20;
+            --light-color: #f5f5f5;
+            --text-color: #333;
+            --text-light: #777;
+            --white: #ffffff;
+            --error-color: #dc3545;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--text-color);
+        }
+
+        .navbar-admin {
+            background-color: var(--primary-color);
+            box-shadow: var(--box-shadow);
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            color: white !important;
+            font-size: 1.5rem;
+        }
+
+        .logo {
+            color: var(--secondary-color);
+        }
+
+        .admin-container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .card-edit {
+            border: none;
+            border-radius: 10px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--dark-color);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.25rem rgba(46, 125, 50, 0.25);
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: block;
+        }
+
+        .is-invalid {
+            border-color: var(--error-color) !important;
+        }
+
+        .invalid-feedback {
+            color: var(--error-color);
+            font-size: 0.85em;
+        }
+
+        .flash-messages {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 0 15px;
+            }
+            
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
+            
+            .preview-image {
+                max-width: 150px;
+                max-height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-admin">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('painel_admin') }}">
+                <span class="logo">Chefabook</span> Admin
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('painel_admin') }}#usuarios">Usuários</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('painel_admin') }}#receitas">Receitas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">
+                            <i class="bi bi-box-arrow-right"></i> Sair
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert-data" data-category="{{ category }}" data-message="{{ message }}"></div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="admin-container">
+        <div class="card card-edit mb-5">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-journal-bookmark"></i> Editar Receita</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('editar_receita_admin', receita_id=receita._id) }}" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="titulo" class="form-label">Título da Receita</label>
+                        <input type="text" class="form-control" id="titulo" name="titulo" 
+                               value="{{ receita.titulo }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="categoria" class="form-label">Categoria</label>
+                        <select class="form-select" id="categoria" name="categoria" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="Entradas" {% if receita.categoria == 'Entradas' %}selected{% endif %}>Entradas</option>
+                            <option value="Prato Principal" {% if receita.categoria == 'Prato Principal' %}selected{% endif %}>Prato Principal</option>
+                            <option value="Sobremesas" {% if receita.categoria == 'Sobremesas' %}selected{% endif %}>Sobremesas</option>
+                            <option value="Bebidas" {% if receita.categoria == 'Bebidas' %}selected{% endif %}>Bebidas</option>
+                            <option value="Lanches" {% if receita.categoria == 'Lanches' %}selected{% endif %}>Lanches</option>
+                            <option value="Saladas" {% if receita.categoria == 'Saladas' %}selected{% endif %}>Saladas</option>
+                            <option value="Sopas" {% if receita.categoria == 'Sopas' %}selected{% endif %}>Sopas</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="ingredientes" class="form-label">Ingredientes</label>
+                        <textarea class="form-control" id="ingredientes" name="ingredientes" 
+                                  rows="4" required>{{ receita.ingredientes }}</textarea>
+                        <small class="text-muted">Separe cada ingrediente com uma nova linha</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="preparo" class="form-label">Modo de Preparo</label>
+                        <textarea class="form-control" id="preparo" name="preparo" 
+                                  rows="6" required>{{ receita.preparo }}</textarea>
+                        <small class="text-muted">Descreva passo a passo o preparo</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="imagem" class="form-label">Imagem da Receita</label>
+                        <input type="file" class="form-control" id="imagem" name="imagem" accept="image/*">
+                        {% if receita.imagem_id %}
+                            <img src="{{ url_for('imagem_receita', receita_id=receita._id) }}" 
+                                 alt="Imagem atual da receita" class="preview-image">
+                            <small class="text-muted">Deixe em branco para manter a imagem atual</small>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Criada por</label>
+                        <input type="text" class="form-control" value="{{ usuario_nome }}" readonly>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('painel_admin') }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Salvar Alterações
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showAlert(category, message) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 5000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            })
+
+            Toast.fire({
+                icon: category,
+                title: message
+            })
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert-data');
+            
+            alerts.forEach(alert => {
+                const category = alert.getAttribute('data-category');
+                const message = alert.getAttribute('data-message');
+                
+                if (category && message) {
+                    showAlert(category, message);
+                }
+            });
+
+            // Preview da imagem quando selecionada
+            const imagemInput = document.getElementById('imagem');
+            if (imagemInput) {
+                imagemInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            let preview = document.querySelector('.preview-image');
+                            if (!preview) {
+                                preview = document.createElement('img');
+                                preview.className = 'preview-image';
+                                imagemInput.parentNode.appendChild(preview);
+                            }
+                            preview.src = event.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

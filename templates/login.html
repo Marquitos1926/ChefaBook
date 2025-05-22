@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Chefabook</title>
+    <!-- Favicon -->
+    <link rel="icon" href="https://img.icons8.com/color/48/000000/restaurant--v1.png" type="image/x-icon">
+    <link rel="shortcut icon" href="https://img.icons8.com/color/48/000000/restaurant--v1.png" type="image/x-icon">
+    <!-- Fontes -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap">
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary-color: #2E7D32;
+            --secondary-color: #FFA726;
+            --dark-color: #1b5e20;
+            --light-color: #f5f5f5;
+            --text-color: #333;
+            --text-light: #777;
+            --white: #ffffff;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                        url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .admin-access-btn {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 12px 20px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 100;
+            transition: var(--transition);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .admin-access-btn:hover {
+            background-color: var(--dark-color);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .admin-access-btn::before {
+            content: "👨‍💼";
+            font-size: 16px;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.96);
+            max-width: 450px;
+            width: 90%;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+        }
+
+        .logo {
+            display: inline-block;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: var(--transition);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        input:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+            background-color: var(--white);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--secondary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            background-color: #e6951d;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .footer-text {
+            margin-top: 25px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .footer-text a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-text a:hover {
+            text-decoration: underline;
+            color: var(--dark-color);
+        }
+
+        /* Efeito de loading no botão */
+        .btn.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .btn.loading::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: var(--white);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 25px;
+            }
+            
+            .admin-access-btn {
+                top: 20px;
+                right: 20px;
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                width: 95%;
+                padding: 25px 20px;
+            }
+            
+            input, .btn {
+                padding: 12px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Botão de Acesso Administrativo -->
+    <a href="{{ url_for('login_admin') }}" class="admin-access-btn">Administrativo</a>
+
+    <div class="container">
+        <h2>Bem-vindo ao <span class="logo">Chefabook</span></h2>
+        <p class="subtitle">Faça login para acessar sua conta</p>
+
+        <!-- Mensagens flash -->
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert-data" data-category="{{ category }}" data-message="{{ message }}"></div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <form method="POST" action="{{ url_for('login') }}" id="loginForm">
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" placeholder="seu@email.com" required
+                       value="{{ request.form.email if request.form.email else '' }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" name="senha" placeholder="Sua senha" required>
+            </div>
+
+            <button type="submit" class="btn" id="submitBtn">Entrar</button>
+        </form>
+
+        <p class="footer-text">Não tem uma conta? <a href="{{ url_for('cadastrar_usuario') }}">Cadastre-se aqui</a></p>
+    </div>
+
+    <script>
+        // Mostrar mensagens flash
+        function showAlert(category, message) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 5000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            })
+
+            Toast.fire({
+                icon: category,
+                title: message
+            })
+        }
+
+        // Capturar mensagens do Flask
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert-data')
+            
+            alerts.forEach(alert => {
+                const category = alert.getAttribute('data-category')
+                const message = alert.getAttribute('data-message')
+                
+                if (category && message) {
+                    showAlert(category, message)
+                }
+            })
+        })
+
+        // Validação do formulário
+        const loginForm = document.getElementById('loginForm')
+        const submitBtn = document.getElementById('submitBtn')
+
+        loginForm.addEventListener('submit', function(e) {
+            const email = document.getElementById('email').value.trim()
+            const senha = document.getElementById('senha').value.trim()
+            
+            if (!email || !email.includes('@')) {
+                e.preventDefault()
+                showAlert('error', 'Por favor, insira um e-mail válido')
+                return false
+            }
+            
+            if (!senha) {
+                e.preventDefault()
+                showAlert('error', 'Por favor, insira sua senha')
+                return false
+            }
+            
+            // Mostrar loading no botão
+            submitBtn.classList.add('loading')
+            submitBtn.disabled = true
+            
+            return true
+        })
+
+        // Efeito de hover nos inputs
+        const inputs = document.querySelectorAll('input')
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentNode.querySelector('label').style.color = 'var(--primary-color)'
+            })
+            
+            input.addEventListener('blur', function() {
+                this.parentNode.querySelector('label').style.color = 'var(--text-color)'
+            })
+        })
+    </script>
+</body>
+</html>
