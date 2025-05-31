@@ -23,6 +23,7 @@ db = client.get_database('chefabook')
 fs = GridFS(db)
 usuarios_col = db['usuarios']
 receitas_col = db['receitas']
+feedbacks_col = db['feedbacks']
 
 # Decorators
 def login_required(f):
@@ -117,6 +118,7 @@ def login_admin():
     if request.method == "POST":
         email = request.form.get("email", "").strip()
         password = request.form.get("password", "").strip()
+        
 
         if email == ADMIN_CREDENTIALS["email"] and password == ADMIN_CREDENTIALS["password"]:
             session['user_id'] = "admin"  # ID especial para admin
@@ -144,6 +146,8 @@ def painel_admin():
         # Estatísticas
         total_usuarios = usuarios_col.count_documents({})
         total_receitas = receitas_col.count_documents({})
+        total_feedbacks = feedbacks_col.count_documents({})
+        feedbacks_nao_lidos = feedbacks_col.count_documents({'lido': False})
         
         # Últimos usuários cadastrados
         usuarios = list(usuarios_col.find().sort("data_cadastro", -1).limit(10))
@@ -165,12 +169,18 @@ def painel_admin():
                 'data_cadastro': receita.get('data_cadastro', datetime.now())
             })
 
+        # Últimos feedbacks recebidos
+        feedbacks = list(feedbacks_col.find().sort("data", -1).limit(10))
+
         return render_template(
             "painel_admin.html",
             usuarios=usuarios,
             receitas=receitas_com_usuario,
+            feedbacks=feedbacks,
             total_usuarios=total_usuarios,
-            total_receitas=total_receitas
+            total_receitas=total_receitas,
+            total_feedbacks=total_feedbacks,
+            feedbacks_nao_lidos=feedbacks_nao_lidos
         )
         
     except Exception as e:
@@ -240,6 +250,7 @@ def cadastrar_usuario():
 
     return render_template('cadastrar_usuario.html')
 
+
 # Rotas de receitas
 @app.route('/cadastrar_receita', methods=['GET', 'POST'])
 @login_required
@@ -252,41 +263,45 @@ def cadastrar_receita():
         user_id = session['user_id']
         
         if not titulo or not categoria or not ingredientes or not preparo:
-            flash("Todos os campos são obrigatórios", "error")
+            flash("Todos os campos textuais são obrigatórios", "error")
             return redirect(request.url)
         
-        if 'imagem' not in request.files:
-            flash("Nenhuma imagem enviada", "error")
-            return redirect(request.url)
+        imagem_id = None
+        file = request.files.get('imagem')
         
-        file = request.files['imagem']
+        # Processa a imagem apenas se foi enviada
+        if file and file.filename != '':
+            if allowed_file(file.filename):
+                try:
+                    imagem_id = fs.put(file, filename=secure_filename(file.filename))
+                except Exception as e:
+                    flash(f"Erro ao processar imagem: {str(e)}", "error")
+                    return redirect(request.url)
+            else:
+                flash("Tipo de arquivo não permitido. Use PNG, JPG ou JPEG.", "error")
+                return redirect(request.url)
         
-        if file.filename == '':
-            flash("Nenhuma imagem selecionada", "error")
-            return redirect(request.url)
-        
-        if file and allowed_file(file.filename):
-            try:
-                imagem_id = fs.put(file, filename=secure_filename(file.filename))
+        # Cria a receita com ou sem imagem
+        try:
+            receita = {
+                'titulo': titulo,
+                'categoria': categoria,
+                'ingredientes': ingredientes,
+                'preparo': preparo,
+                'user_id': user_id,
+                'data_cadastro': datetime.now()
+            }
+            
+            if imagem_id:
+                receita['imagem_id'] = imagem_id
                 
-                receita = {
-                    'titulo': titulo,
-                    'categoria': categoria,
-                    'ingredientes': ingredientes,
-                    'preparo': preparo,
-                    'imagem_id': imagem_id,
-                    'user_id': user_id,
-                    'data_cadastro': datetime.now()
-                }
-                receitas_col.insert_one(receita)
-                
-                flash("Receita cadastrada com sucesso!", "success")
-                return redirect(url_for('dashboard'))
-                
-            except Exception as e:
-                flash(f"Erro ao cadastrar receita: {str(e)}", "error")
-        else:
-            flash("Tipo de arquivo não permitido. Use PNG, JPG ou JPEG.", "error")
+            receitas_col.insert_one(receita)
+            
+            flash("Receita cadastrada com sucesso!", "success")
+            return redirect(url_for('dashboard'))
+            
+        except Exception as e:
+            flash(f"Erro ao cadastrar receita: {str(e)}", "error")
 
     return render_template('cadastrar_receitas.html')
 
@@ -539,6 +554,142 @@ def excluir_receita_admin(receita_id):
         flash(f"Erro ao excluir receita: {str(e)}", "error")
     
     return redirect(url_for("painel_admin"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@app.route('/enviar_feedback', methods=['GET', 'POST'])
+@login_required
+def enviar_feedback():
+    if request.method == 'POST':
+        try:
+            # Obter dados do formulário
+            tipo = request.form.get('tipo', '').strip()
+            mensagem = request.form.get('mensagem', '').strip()
+            avaliacao = int(request.form.get('avaliacao', 0))
+            
+            # Validação básica
+            if not mensagem or len(mensagem) < 10:
+                flash("Por favor, escreva uma mensagem mais detalhada (mínimo 10 caracteres)", "error")
+                return redirect(url_for('enviar_feedback'))
+            
+            if avaliacao < 1 or avaliacao > 5:
+                flash("Por favor, selecione uma avaliação entre 1 e 5 estrelas", "error")
+                return redirect(url_for('enviar_feedback'))
+            
+            # Criar documento do feedback
+            feedback = {
+                'user_id': session['user_id'],
+                'user_nome': session['user_nome'],
+                'tipo': tipo,
+                'mensagem': mensagem,
+                'avaliacao': avaliacao,
+                'data': datetime.now(),
+                'lido': False
+            }
+            
+            # Inserir no MongoDB
+            feedbacks_col.insert_one(feedback)
+            
+            flash("Obrigado pelo seu feedback! Valorizamos sua opinião.", "success")
+            return redirect(url_for('dashboard'))
+            
+        except Exception as e:
+            flash(f"Erro ao enviar feedback: {str(e)}", "error")
+            return redirect(url_for('enviar_feedback'))
+    
+    # Se for GET, mostrar o formulário
+    return render_template('enviar_feedback.html')
+
+
+
+
+@app.route('/admin/feedbacks')
+@admin_required
+def visualizar_feedbacks():
+    try:
+        # Obter todos os feedbacks, ordenados por data (mais recentes primeiro)
+        feedbacks = list(feedbacks_col.find().sort("data", -1))
+        
+        return render_template('painel_admin.html', 
+                           feedbacks=feedbacks,
+                           total_feedbacks=feedbacks_col.count_documents({}),
+                           feedbacks_nao_lidos=feedbacks_col.count_documents({'lido': False}))
+        
+    except Exception as e:
+        flash(f"Erro ao carregar feedbacks: {str(e)}", "error")
+        return redirect(url_for('painel_admin'))
+
+
+
+
+
+
+@app.route('/admin/marcar_lido/<feedback_id>', methods=['POST'])
+@admin_required
+def marcar_feedback_lido(feedback_id):
+    try:
+        feedbacks_col.update_one(
+            {'_id': ObjectId(feedback_id)},
+            {'$set': {'lido': True}}
+        )
+        flash("Feedback marcado como lido", "success")
+    except Exception as e:
+        flash(f"Erro ao atualizar feedback: {str(e)}", "error")
+    
+    return redirect(url_for('painel_admin'))
+
+
+
+
 
 # Rotas de erro
 @app.errorhandler(404)

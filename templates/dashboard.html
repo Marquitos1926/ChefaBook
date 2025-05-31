@@ -17,6 +17,7 @@
             --dark-color: #212529;
             --text-color: #495057;
             --text-light: #6c757d;
+            --feedback-color: #1e5a21;;
         }
         
         body {
@@ -166,6 +167,38 @@
             color: white;
         }
         
+        /* Botão de Feedback */
+        .btn-feedback {
+            background-color: var(--feedback-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.7rem 1.8rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+        
+        .btn-feedback:hover {
+            background-color: #1e5a21;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.4);
+            color: white;
+        }
+        
+        .btn-feedback i {
+            margin-right: 8px;
+            font-size: 1.1rem;
+        }
+        
         .footer {
             background-color: var(--dark-color);
             color: white;
@@ -182,6 +215,12 @@
                 padding: 3rem 0;
                 clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
             }
+            
+            .btn-feedback {
+                padding: 0.6rem 1.5rem;
+                bottom: 20px;
+                right: 20px;
+            }
         }
         
         /* Admin badge style */
@@ -194,6 +233,17 @@
             font-weight: 600;
             margin-left: 0.5rem;
             vertical-align: middle;
+        }
+        
+        /* Floating animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .btn-feedback {
+            animation: float 3s ease-in-out infinite;
         }
     </style>
 </head>
@@ -296,6 +346,11 @@
         {% endif %}
     </div>
 
+    <!-- Botão de Feedback flutuante -->
+    <a href="{{ url_for('enviar_feedback') }}" class="btn btn-feedback">
+        <i class="bi bi-chat-left-text"></i> Enviar Feedback
+    </a>
+
     <!-- Rodapé elegante -->
     <footer class="footer text-center">
         <div class="container">
@@ -321,6 +376,18 @@
                         clearInterval(typingEffect);
                     }
                 }, 100);
+            }
+            
+            // Efeito de pulso no botão de feedback
+            const feedbackBtn = document.querySelector('.btn-feedback');
+            if (feedbackBtn) {
+                feedbackBtn.addEventListener('mouseover', function() {
+                    this.style.animation = 'none';
+                });
+                
+                feedbackBtn.addEventListener('mouseout', function() {
+                    this.style.animation = 'float 3s ease-in-out infinite';
+                });
             }
         });
     </script>

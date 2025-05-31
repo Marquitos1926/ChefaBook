@@ -1,0 +1,40 @@
+{% extends 'base_admin.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Feedbacks Recebidos</h2>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Usuário</th>
+                <th>Tipo</th>
+                <th>Avaliação</th>
+                <th>Mensagem</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fb in feedbacks %}
+            <tr>
+                <td>{{ fb.data.strftime('%d/%m/%Y %H:%M') }}</td>
+                <td>{{ fb.user_nome }}</td>
+                <td>{{ fb.tipo|capitalize }}</td>
+                <td>
+                    {% for i in range(fb.avaliacao) %}★{% endfor %}
+                    {% for i in range(5 - fb.avaliacao) %}☆{% endfor %}
+                </td>
+                <td>{{ fb.mensagem }}</td>
+                <td>{{ 'Lido' if fb.lido else 'Não lido' }}</td>
+                <td>
+                    <a href="{{ url_for('marcar_feedback_lido', feedback_id=fb._id) }}" 
+                       class="btn btn-sm btn-info">Marcar como lido</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
