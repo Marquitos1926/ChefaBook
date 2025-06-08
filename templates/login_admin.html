@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Admin | Chefabook</title>
+    <link rel="icon" href="https://img.icons8.com/ios-filled/50/000000/admin-settings-male.png" type="image/x-icon">
+    <link rel="shortcut icon" href="https://img.icons8.com/ios-filled/50/000000/admin-settings-male.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary-color: #2E7D32;
+            --secondary-color: #FFA726;
+            --dark-color: #1b5e20;
+            --light-color: #f5f5f5;
+            --text-color: #333;
+            --text-light: #777;
+            --white: #ffffff;
+            --error-color: #dc3545;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.96);
+            max-width: 450px;
+            width: 90%;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: var(--transition);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        input:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+            background-color: var(--white);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--secondary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            background-color: #e6951d;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .btn.loading::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: var(--white);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .is-invalid {
+            border-color: var(--error-color) !important;
+        }
+
+        .invalid-feedback {
+            color: var(--error-color);
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 30px 25px;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                width: 95%;
+                padding: 25px 20px;
+            }
+            
+            input, .btn {
+                padding: 12px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Acesso <span>Administrativo</span></h2>
+        <p class="subtitle">Insira suas credenciais para continuar</p>
+
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert-data" data-category="{{ category }}" data-message="{{ message }}"></div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <form method="POST" action="{{ url_for('login_admin') }}" id="loginForm">
+            <div class="form-group">
+                <label for="email">E-mail Administrativo</label>
+                <input type="email" id="email" name="email" placeholder="exemplo@email.com" required>
+                <div class="invalid-feedback" id="email-error"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" placeholder="Sua senha administrativa" required>
+                <div class="invalid-feedback" id="password-error"></div>
+            </div>
+
+            <button type="submit" class="btn" id="submitBtn">Acessar Painel</button>
+        </form>
+    </div>
+
+    <script>
+        function showAlert(category, message) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 5000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            })
+
+            Toast.fire({
+                icon: category,
+                title: message
+            })
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert-data')
+            
+            alerts.forEach(alert => {
+                const category = alert.getAttribute('data-category')
+                const message = alert.getAttribute('data-message')
+                
+                if (category && message) {
+                    showAlert(category, message)
+                    
+                    if (message.toLowerCase().includes('e-mail') || message.toLowerCase().includes('email')) {
+                        highlightError('email', message)
+                    } else if (message.toLowerCase().includes('senha')) {
+                        highlightError('password', message)
+                    }
+                }
+            })
+        })
+
+        function highlightError(fieldId, message) {
+            const field = document.getElementById(fieldId)
+            const errorElement = document.getElementById(`${fieldId}-error`)
+            
+            if (field && errorElement) {
+                field.classList.add('is-invalid')
+                errorElement.textContent = message
+                errorElement.style.display = 'block'
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            let isValid = true
+            
+            document.querySelectorAll('.is-invalid').forEach(el => {
+                el.classList.remove('is-invalid')
+            })
+            document.querySelectorAll('.invalid-feedback').forEach(el => {
+                el.style.display = 'none'
+            })
+            
+            const email = document.getElementById('email').value.trim()
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+            if (!email) {
+                highlightError('email', 'O e-mail é obrigatório')
+                isValid = false
+            } else if (!emailRegex.test(email)) {
+                highlightError('email', 'Por favor, insira um e-mail válido')
+                isValid = false
+            }
+            
+            const password = document.getElementById('password').value
+            if (!password) {
+                highlightError('password', 'A senha é obrigatória')
+                isValid = false
+            }
+            
+            if (!isValid) {
+                event.preventDefault()
+                showAlert('error', 'Por favor, corrija os erros no formulário')
+            } else {
+                document.getElementById('submitBtn').classList.add('loading')
+                document.getElementById('submitBtn').disabled = true
+            }
+        })
+
+        const inputs = document.querySelectorAll('input')
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentNode.querySelector('label').style.color = 'var(--primary-color)'
+            })
+            
+            input.addEventListener('blur', function() {
+                this.parentNode.querySelector('label').style.color = 'var(--text-color)'
+            })
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin | Chefabook</title>
+    <link rel="icon" href="https://img.icons8.com/ios-filled/50/000000/admin-settings-male.png" type="image/x-icon">
+    <link rel="shortcut icon" href="https://img.icons8.com/ios-filled/50/000000/admin-settings-male.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary-color: #2E7D32;
+            --secondary-color: #FFA726;
+            --dark-color: #1b5e20;
+            --light-color: #f5f5f5;
+            --text-color: #333;
+            --text-light: #777;
+            --white: #ffffff;
+            --error-color: #dc3545;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .navbar-admin {
+            background-color: var(--primary-color);
+            box-shadow: var(--box-shadow);
+        }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            color: white !important;
+            font-size: 1.5rem;
+        }
+
+        .logo {
+            color: var(--secondary-color);
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .card-dashboard {
+            border: none;
+            border-radius: 10px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .card-dashboard:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--dark-color);
+        }
+
+        .btn-warning {
+            background-color: var(--secondary-color);
+            border: none;
+        }
+
+        .btn-warning:hover {
+            background-color: #e6951d;
+        }
+
+        .btn-danger {
+            background-color: var(--error-color);
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            border: none;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+        }
+
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .table th {
+            font-weight: 500;
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .table td {
+            padding: 0.75rem 1rem;
+            vertical-align: middle;
+        }
+
+        .badge-admin {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            padding-left: 40px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            height: 40px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 10px;
+            color: var(--text-light);
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .pagination .page-link {
+            color: var(--primary-color);
+        }
+
+        .flash-messages {
+            display: none;
+        }
+
+        .actions-column {
+            white-space: nowrap;
+            width: 1%;
+        }
+
+        .feedback-rating {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .feedback-rating .bi-star-fill {
+            color: #FFC107;
+        }
+
+        .feedback-rating .bi-star {
+            color: #E0E0E0;
+        }
+
+        .table-warning {
+            --bs-table-bg: rgba(255, 193, 7, 0.1);
+        }
+
+        .modal-content {
+            border-radius: 10px;
+            overflow: hidden;
+            border: none;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom: none;
+            padding: 1.2rem 1.5rem;
+        }
+
+        .modal-title {
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-body p {
+            margin-bottom: 0.8rem;
+        }
+
+        .modal-body hr {
+            margin: 1.2rem 0;
+            opacity: 0.2;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            background-color: #f8f9fa;
+            border-top: none;
+        }
+
+        .btn-close {
+            filter: invert(1);
+            opacity: 0.8;
+        }
+
+        .btn-close:hover {
+            opacity: 1;
+        }
+
+        [data-bs-toggle="modal"] {
+            position: relative;
+            z-index: 1;
+        }
+
+        .tooltip {
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 0 15px;
+            }
+            
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
+            
+            .actions-column {
+                white-space: normal;
+                width: auto;
+            }
+
+            .table-responsive {
+                border-radius: 0;
+            }
+
+            .table th, .table td {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .btn-sm {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .card-header h5 {
+                font-size: 1.1rem;
+            }
+
+            .card-body .display-6 {
+                font-size: 2rem;
+            }
+
+            .modal-dialog {
+                margin: 0.5rem auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-admin">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <span class="logo">Chefabook</span> Admin
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#usuarios">Usuários</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#receitas">Receitas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#feedbacks">Feedbacks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="bi bi-box-arrow-right"></i> Sair
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert-data" data-category="{{ category }}" data-message="{{ message }}"></div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="admin-container">
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card card-dashboard">
+                    <div class="card-body text-center">
+                        <h5 class="card-title"><i class="bi bi-people-fill"></i> Total de Usuários</h5>
+                        <p class="card-text display-6">{{ total_usuarios }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-dashboard">
+                    <div class="card-body text-center">
+                        <h5 class="card-title"><i class="bi bi-journal-bookmark-fill"></i> Total de Receitas</h5>
+                        <p class="card-text display-6">{{ total_receitas }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-dashboard">
+                    <div class="card-body text-center">
+                        <h5 class="card-title"><i class="bi bi-chat-square-text-fill"></i> Feedbacks</h5>
+                        <p class="card-text display-6">{{ total_feedbacks }}</p>
+                        <small class="text-muted">{{ feedbacks_nao_lidos }} não lidos</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-dashboard mb-5" id="usuarios">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-people-fill"></i> Usuários Cadastrados</h5>
+                <span class="badge badge-admin">{{ usuarios|length }} registros</span>
+            </div>
+            <div class="card-body">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="searchUsers" class="form-control" placeholder="Pesquisar usuários...">
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Telefone</th>
+                                <th class="actions-column">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTable">
+                            {% for usuario in usuarios %}
+                            <tr>
+                                <td>{{ usuario._id }}</td>
+                                <td>{{ usuario.nome }}</td>
+                                <td>{{ usuario.email }}</td>
+                                <td>{{ usuario.telefone }}</td>
+                                <td class="actions-column">
+                                    <div class="d-flex">
+                                        <a href="{{ url_for('editar_usuario_admin', usuario_id=usuario._id) }}" 
+                                           class="btn btn-warning btn-sm me-2" title="Editar" data-bs-toggle="tooltip">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form action="{{ url_for('excluir_usuario', usuario_id=usuario._id) }}" method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-danger btn-sm" 
+                                                    onclick="return confirmDelete('usuario')" title="Excluir" data-bs-toggle="tooltip">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-dashboard mb-5" id="receitas">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-journal-bookmark-fill"></i> Receitas Cadastradas</h5>
+                <span class="badge badge-admin">{{ receitas|length }} registros</span>
+            </div>
+            <div class="card-body">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="searchRecipes" class="form-control" placeholder="Pesquisar receitas...">
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Título</th>
+                                <th>Categoria</th>
+                                <th>Usuário</th>
+                                <th class="actions-column">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recipesTable">
+                            {% for receita in receitas %}
+                            <tr>
+                                <td>{{ receita._id }}</td>
+                                <td>{{ receita.titulo }}</td>
+                                <td>{{ receita.categoria }}</td>
+                                <td>{{ receita.usuario_nome }}</td>
+                                <td class="actions-column">
+                                    <div class="d-flex">
+                                        <a href="{{ url_for('editar_receita_admin', receita_id=receita._id) }}" 
+                                           class="btn btn-warning btn-sm me-2" title="Editar" data-bs-toggle="tooltip">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form action="{{ url_for('excluir_receita_admin', receita_id=receita._id) }}" method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-danger btn-sm" 
+                                                    onclick="return confirmDelete('receita')" title="Excluir" data-bs-toggle="tooltip">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-dashboard" id="feedbacks">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-chat-square-text-fill"></i> Feedbacks Recebidos</h5>
+                <span class="badge badge-admin">{{ feedbacks|length }} registros</span>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Usuário</th>
+                                <th>Tipo</th>
+                                <th>Avaliação</th>
+                                <th>Data</th>
+                                <th>Status</th>
+                                <th class="actions-column">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for feedback in feedbacks %}
+                            <tr class="{{ 'table-warning' if not feedback.lido else '' }}">
+                                <td>{{ feedback.user_nome }}</td>
+                                <td>{{ feedback.tipo }}</td>
+                                <td>
+                                    {% for i in range(5) %}
+                                        {% if i < feedback.avaliacao %}
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                        {% else %}
+                                            <i class="bi bi-star text-warning"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>{{ feedback.data.strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td>
+                                    {% if feedback.lido %}
+                                        <span class="badge bg-success">Lido</span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark">Não lido</span>
+                                    {% endif %}
+                                </td>
+                                <td class="actions-column">
+                                    <div class="d-flex">
+                                        <button class="btn btn-info btn-sm me-2 view-feedback-btn" 
+                                                data-feedback-id="{{ feedback._id }}"
+                                                data-user-nome="{{ feedback.user_nome }}"
+                                                data-tipo="{{ feedback.tipo }}"
+                                                data-avaliacao="{{ feedback.avaliacao }}"
+                                                data-data="{{ feedback.data.strftime('%d/%m/%Y %H:%M') }}"
+                                                data-mensagem="{{ feedback.mensagem }}"
+                                                data-lido="{{ feedback.lido }}"
+                                                title="Visualizar">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <form action="{{ url_for('marcar_feedback_lido', feedback_id=feedback._id) }}" method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-primary btn-sm" title="Marcar como lido">
+                                                <i class="bi bi-check2"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal único para feedback -->
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="feedbackModalTitle">Detalhes do Feedback</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="feedbackModalBody">
+                    <!-- Conteúdo será preenchido via JavaScript -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <form id="markAsReadForm" method="POST" action="">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check2"></i> Marcar como lido
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Função para mostrar alertas
+        function showAlert(category, message) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 5000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            })
+
+            Toast.fire({
+                icon: category,
+                title: message
+            })
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mostrar mensagens flash
+            const alerts = document.querySelectorAll('.alert-data');
+            alerts.forEach(alert => {
+                const category = alert.getAttribute('data-category');
+                const message = alert.getAttribute('data-message');
+                if (category && message) {
+                    showAlert(category, message);
+                }
+            });
+
+            // Inicializar tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl, {
+                    trigger: 'hover'
+                });
+            });
+
+            // Configurar o modal de feedback
+            const feedbackModal = new bootstrap.Modal(document.getElementById('feedbackModal'));
+            const feedbackModalTitle = document.getElementById('feedbackModalTitle');
+            const feedbackModalBody = document.getElementById('feedbackModalBody');
+            const markAsReadForm = document.getElementById('markAsReadForm');
+
+            // Eventos para os botões de visualização
+            document.querySelectorAll('.view-feedback-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const feedbackId = this.getAttribute('data-feedback-id');
+                    const userNome = this.getAttribute('data-user-nome');
+                    const tipo = this.getAttribute('data-tipo');
+                    const avaliacao = parseInt(this.getAttribute('data-avaliacao'));
+                    const data = this.getAttribute('data-data');
+                    const mensagem = this.getAttribute('data-mensagem');
+                    const lido = this.getAttribute('data-lido') === 'True';
+
+                    // Preencher o modal
+                    feedbackModalTitle.textContent = `Feedback de ${userNome}`;
+                    
+                    let starsHtml = '';
+                    for (let i = 0; i < 5; i++) {
+                        starsHtml += i < avaliacao 
+                            ? '<i class="bi bi-star-fill text-warning"></i>' 
+                            : '<i class="bi bi-star text-warning"></i>';
+                    }
+
+                    feedbackModalBody.innerHTML = `
+                        <p><strong>Tipo:</strong> ${tipo}</p>
+                        <p><strong>Avaliação:</strong> ${starsHtml}</p>
+                        <p><strong>Data:</strong> ${data}</p>
+                        <hr>
+                        <p><strong>Mensagem:</strong></p>
+                        <p class="bg-light p-3 rounded">${mensagem}</p>
+                    `;
+
+                    // Configurar o formulário de "Marcar como lido"
+                    markAsReadForm.action = `/admin/marcar_lido/${feedbackId}`;
+                    markAsReadForm.style.display = lido ? 'none' : 'block';
+
+                    // Mostrar o modal
+                    feedbackModal.show();
+                });
+            });
+
+            // Função de confirmação para exclusão
+            window.confirmDelete = function(type) {
+                return Swal.fire({
+                    title: `Excluir ${type}?`,
+                    text: `Você está prestes a excluir este ${type}. Esta ação não pode ser desfeita!`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sim, excluir!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    return result.isConfirmed;
+                });
+            }
+
+            // Funções de pesquisa
+            document.getElementById('searchUsers')?.addEventListener('input', function(e) {
+                const searchValue = e.target.value.toLowerCase();
+                const rows = document.querySelectorAll('#usersTable tr');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchValue) ? '' : 'none';
+                });
+            });
+
+            document.getElementById('searchRecipes')?.addEventListener('input', function(e) {
+                const searchValue = e.target.value.toLowerCase();
+                const rows = document.querySelectorAll('#recipesTable tr');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchValue) ? '' : 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

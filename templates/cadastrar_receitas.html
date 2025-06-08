@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Receita | Chefabook</title>
+    <link rel="icon" href="https://img.icons8.com/color/48/000000/restaurant--v1.png" type="image/x-icon">
+    <link rel="shortcut icon" href="https://img.icons8.com/color/48/000000/restaurant--v1.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2E7D32;
+            --secondary-color: #FFA726;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --text-color: #495057;
+            --text-light: #6c757d;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .navbar-custom {
+            background-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 0.8rem 0;
+        }
+        
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .navbar-brand i {
+            color: var(--secondary-color);
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            padding: 0.5rem 1.2rem;
+            margin: 0 0.2rem;
+            border-radius: 4px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        .nav-link.active {
+            background-color: var(--secondary-color);
+            color: var(--dark-color) !important;
+        }
+        
+        .logout-link {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logout-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: white;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            transform-origin: right;
+        }
+        
+        .logout-link:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+        .container-main {
+            max-width: 800px;
+            margin-top: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .page-header {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .card-form {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            padding: 2.5rem;
+            background-color: white;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.75rem;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.25rem rgba(255, 167, 38, 0.25);
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+            width: 100%;
+        }
+        
+        .btn-submit:hover {
+            background-color: #1e5a21;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.4);
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .file-upload-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .file-upload-label {
+            display: block;
+            padding: 2rem;
+            background-color: var(--light-color);
+            border: 2px dashed #e9ecef;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload-label:hover {
+            background-color: #f1f3f5;
+            border-color: var(--secondary-color);
+        }
+        
+        .file-upload-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .upload-icon {
+            font-size: 2rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .badge-category {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+            border-radius: 50px;
+        }
+        
+        .footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container-main {
+                padding: 0 1.5rem;
+            }
+            
+            .card-form {
+                padding: 1.5rem;
+            }
+            
+            .file-upload-label {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegação elegante -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+                <i class="bi bi-journal-bookmark"></i> Chefabook
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('cadastrar_receita') }}">
+                            <i class="bi bi-plus-circle"></i> Nova Receita
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('visualizar_receitas') }}">
+                            <i class="bi bi-collection"></i> Minhas Receitas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="bi bi-house"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link logout-link" href="{{ url_for('logout') }}">
+                            <i class="bi bi-box-arrow-right"></i> Sair
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo principal -->
+    <div class="container container-main">
+        <div class="card-form">
+            <h2 class="mb-4 text-center page-title">
+                <i class="bi bi-plus-circle"></i> Cadastrar Nova Receita
+            </h2>
+            
+            <!-- Mensagens flash -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mb-4">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST" action="/cadastrar_receita" enctype="multipart/form-data">
+                <div class="mb-4">
+                    <label for="titulo" class="form-label">Título da Receita</label>
+                    <input type="text" class="form-control" id="titulo" name="titulo" 
+                           placeholder="Ex: Bolo de Chocolate" required>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="categoria" class="form-label">Categoria</label>
+                    <input type="text" class="form-control" id="categoria" name="categoria" 
+                           placeholder="Ex: Sobremesas, Massas, Carnes..." required>
+                    <small class="text-muted">Use palavras-chave para categorizar sua receita</small>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="ingredientes" class="form-label">Ingredientes</label>
+                    <textarea class="form-control" id="ingredientes" name="ingredientes" 
+                              placeholder="Liste os ingredientes, um por linha" required></textarea>
+                    <small class="text-muted">Separe os ingredientes com quebras de linha</small>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="preparo" class="form-label">Modo de Preparo</label>
+                    <textarea class="form-control" id="preparo" name="preparo" 
+                              placeholder="Descreva o passo a passo da receita" required></textarea>
+                    <small class="text-muted">Descreva cada etapa em parágrafos separados</small>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Imagem da Receita</label>
+                    <div class="file-upload-wrapper">
+                        <label for="imagem" class="file-upload-label">
+                            <i class="bi bi-cloud-arrow-up upload-icon"></i>
+                            <div class="mt-2 fw-medium">Clique para selecionar uma imagem</div>
+                            <small class="text-muted d-block">Formatos: JPG, PNG (Máx. 5MB)</small>
+                        </label>
+                        <input type="file" class="form-control file-upload-input" id="imagem" 
+                               name="imagem" accept="image/*">
+                    </div>
+                    <img id="preview" class="preview-image" alt="Pré-visualização da imagem">
+                </div>
+                
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-submit">
+                        <i class="bi bi-save"></i> Cadastrar Receita
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Rodapé elegante -->
+    <footer class="footer text-center">
+        <div class="container">
+            <p class="mb-0">© 2023 Chefabook. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Pré-visualização da imagem
+        document.getElementById('imagem').addEventListener('change', function(e) {
+            const preview = document.getElementById('preview');
+            const file = e.target.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.style.display = 'block';
+                    preview.src = e.target.result;
+                }
+                
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Validação do formulário
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const fileInput = document.getElementById('imagem');
+            const file = fileInput.files[0];
+            
+            if (file) {
+                const validTypes = ['image/jpeg', 'image/png'];
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                
+                if (!validTypes.includes(file.type)) {
+                    e.preventDefault();
+                    alert('Por favor, selecione uma imagem no formato JPG ou PNG.');
+                    return false;
+                }
+                
+                if (file.size > maxSize) {
+                    e.preventDefault();
+                    alert('A imagem não pode exceder 5MB.');
+                    return false;
+                }
+            }
+            
+            return true;
+        });
+    </script>
+</body>
+</html>
