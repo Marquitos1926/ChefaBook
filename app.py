@@ -15,7 +15,7 @@ app.secret_key = os.environ.get('SECRET_KEY') or 'sua-chave-secreta-aqui'
 # Configurações
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['MONGO_URI'] = os.environ.get('MONGO_URI') or 'mongodb+srv://juliocardoso:<db_password>@cluster0.fynj6mg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+app.config['MONGO_URI'] = os.environ.get('MONGO_URI') or 'mongodb+srv://juliocardoso:ttAJxnWdq6VteFCD@cluster0.fynj6mg.mongodb.net/chefabook?retryWrites=true&w=majority&appName=Cluster0'
 
 # Conexão com MongoDB
 client = MongoClient(app.config['MONGO_URI'])
